@@ -1,0 +1,75 @@
+name: Update OpenWiki docs
+
+on:
+  schedule:
+    - cron: "0 8 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-wiki:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kipo-docs
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+
+      - name: Checkout kipo-platform
+        uses: actions/checkout@v4
+        with:
+          repository: CodeZenNirvana/kipo-platform
+          path: kipo-platform-src
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install openwiki
+        run: npm install --global openwiki
+
+      - name: Restore previous wiki state into clone (for incremental --update)
+        run: |
+          if [ -d "openwiki" ]; then
+            cp -r openwiki kipo-platform-src/openwiki
+          fi
+          [ -f AGENTS.md ] && cp AGENTS.md kipo-platform-src/AGENTS.md || true
+          [ -f CLAUDE.md ] && cp CLAUDE.md kipo-platform-src/CLAUDE.md || true
+
+      - name: Run openwiki against kipo-platform
+        working-directory: kipo-platform-src
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ -f "openwiki/.last-update.json" ]; then
+            openwiki code --update --print --modelId claude-sonnet-5
+          else
+            openwiki code --init --print --modelId claude-sonnet-5
+          fi
+
+      - name: Copy generated docs back to repo root
+        run: |
+          rm -rf openwiki
+          cp -r kipo-platform-src/openwiki openwiki
+          cp kipo-platform-src/AGENTS.md AGENTS.md
+          cp kipo-platform-src/CLAUDE.md CLAUDE.md
+
+      - name: Clean up cloned source
+        run: rm -rf kipo-platform-src
+
+      - name: Open PR with updated docs
+        uses: peter-evans/create-pull-request@v6
+        with:
+          commit-message: "docs: update OpenWiki from kipo-platform"
+          title: "docs: update OpenWiki"
+          body: |
+            Documentación regenerada automáticamente por openwiki a partir de
+            `CodeZenNirvana/kipo-platform`.
+          branch: openwiki/update
+          add-paths: |
+            openwiki
+            AGENTS.md
+            CLAUDE.md
