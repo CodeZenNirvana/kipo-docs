@@ -16,7 +16,26 @@ funcionando para las 3 apps del monorepo `kipo-platform`
   - `deploy-migrations.yml` — hace `supabase db push` contra `secrets.SUPABASE_PROJECT_REF` (un solo proyecto).
   - **Ninguno de los 4 tiene todavía el concepto de "staging"** — eso es trabajo de código pendiente (ver [Paso 5](#paso-5-github-secrets-y-environments)), no solo de infraestructura.
 - Kipo es una plataforma de facturación CFDI 4.0 (SAT) — esto importa para el punto 4 (PAC): staging no debe timbrar contra el proveedor real.
-- Kipo es multi-tenant: cada negocio tiene su propio subdominio (ej. `keeb-studio.kipo.com.mx` en prod, `keeb-studio.staging.kipo.com.mx` en staging) — esto requiere **Wildcard Domains** en Vercel, no solo un dominio fijo por entorno.
+- Kipo es multi-tenant: cada negocio tiene su propio subdominio (ej. `keeb-studio.kipo.com.mx` en prod, `keeb-studio.staging.kipo.com.mx` en staging) — esto requiere **Wildcard Domains** en Vercel.
+- **Vercel: por ahora plan Hobby (gratis)**, no Pro todavía. Esto cambia cómo se arma "staging" — ver la nota debajo.
+
+### Nota sobre plan de Vercel (Hobby vs Pro)
+
+Verificado contra la documentación oficial de Vercel:
+
+| Feature | Hobby (gratis) | Pro |
+|---|---|---|
+| Preview deployments | ✅ Sí, sin restricción de feature (límite de 100 deploys/día) | ✅ Sí (6,000/día) |
+| Wildcard domains (`*.dominio.com`) | ✅ Sí, en todos los planes — requiere delegar el dominio/subdominio a los nameservers de Vercel | ✅ Sí |
+| Custom Environments (entorno nombrado "staging" con su propio dominio/env vars, gestionado desde el dashboard) | ❌ No disponible | ✅ 1 environment (Enterprise: hasta 12) |
+| Logs de runtime | 1 hora de retención | 1 día |
+| **Uso comercial** | ⚠️ Los [fair use guidelines de Vercel](https://vercel.com/docs/plans/hobby) restringen Hobby a "non-commercial, personal use only" | Sin esa restricción |
+
+Dado que Kipo es un SaaS comercial, el plan Hobby es válido para levantar y
+probar la infraestructura de staging ahora, pero conviene tener en mente
+que el uso comercial real (clientes reales, timbrado real) debería vivir en
+Pro. Este documento describe el camino con **Hobby ahora** (sin Custom
+Environments) y deja una nota al final sobre qué cambia al subir a Pro.
 
 ## Arquitectura objetivo
 
@@ -29,38 +48,45 @@ funcionando para las 3 apps del monorepo `kipo-platform`
 | PAC (timbrado CFDI) | credenciales de producción | credenciales de pruebas/sandbox del PAC |
 
 **Un solo proyecto de Vercel por app** (`kipo-dashboard`, `kipo-platform`) —
-no hace falta un proyecto hermano `*-staging`. Vercel permite definir un
-**Custom Environment** (ej. `staging`) dentro del mismo proyecto, con su
-propio dominio (incluyendo wildcard) y su propio set de variables de
-entorno, independiente de Production. Como `deploy-dashboard.yml` y
-`deploy-backend.yml` no usan la integración Git de Vercel (todo corre vía
-CLI en `workflow_dispatch`), no dependemos de "asignar un dominio a una
-rama" — basta con pasarle el nombre del entorno al deploy:
+no hace falta un proyecto hermano `*-staging`. En el flujo del equipo le
+llamamos **"staging"**, pero técnicamente lo que se manda es un
+**Preview deployment de Vercel** (no un Custom Environment, porque eso
+requiere Pro) con un dominio fijo pegado encima vía alias:
 
 ```bash
-vercel deploy --target staging --token "$VERCEL_TOKEN"
+# Deploy normal (sin --prod) → genera una URL de preview
+DEPLOY_URL=$(vercel deploy --token "$VERCEL_TOKEN" --yes)
+
+# Fijar ese deployment al dominio de staging (y su wildcard de tenants)
+vercel alias "$DEPLOY_URL" staging.kipo.com.mx --token "$VERCEL_TOKEN"
+vercel alias "$DEPLOY_URL" "*.staging.kipo.com.mx" --token "$VERCEL_TOKEN"
 ```
 
-Esto aplica automáticamente el dominio y las env vars que se hayan
-configurado para el Custom Environment `staging` en ese proyecto. Nota:
-Custom Environments y Wildcard Domains son features de plan **Pro o
-Enterprise** (no están en Hobby) — de cualquier forma Hobby no aplica para
-un SaaS comercial como Kipo, así que esto no debería ser una sorpresa al
-dar de alta la cuenta en el Paso 1.
+`vercel alias` no está gateado por plan, así que este mecanismo funciona
+completo en Hobby. La diferencia contra tener un Custom Environment real es
+que **el alias hay que re-ejecutarlo en cada deploy de staging** — no hay
+nada en Vercel que automáticamente apunte `staging.kipo.com.mx` al último
+preview como sí pasa con Production. Por eso este paso debe vivir dentro
+del propio job de CI (ver [Paso 5](#paso-5-github-secrets-y-environments)),
+no como algo manual de una sola vez.
+
+> Nota: confirmar al implementar que `vercel alias` acepta el dominio
+> wildcard tal cual (`*.staging.kipo.com.mx`) como target — es el
+> comportamiento esperado, pero vale la pena validarlo en el primer deploy
+> real antes de automatizarlo.
 
 ---
 
 ## Paso 1 — Cuenta de Vercel
 
-1. Crear cuenta / equipo (Team) en Vercel para la organización, en plan **Pro** (o Enterprise) — requerido para Wildcard Domains y Custom Environments, no disponibles en Hobby.
+1. Crear cuenta / equipo (Team) en Vercel para la organización — **Hobby está bien para empezar**, no hace falta pagar Pro todavía (ver la nota de arriba).
 2. Generar un **token de acceso** (Account Settings → Tokens) — se usará como `VERCEL_TOKEN` en GitHub.
 3. Anotar el `Team ID` (Org ID) — se usará como `VERCEL_ORG_ID`.
 4. Crear 3 proyectos vacíos (se pueden crear al hacer el primer deploy con `vercel link`, o desde el dashboard):
    - `kipo-landing`
    - `kipo-dashboard`
    - `kipo-platform` (backend)
-5. Anotar el **Project ID** de cada uno (Project → Settings → General) — son los `VERCEL_PROJECT_ID_*` que ya esperan los workflows. El mismo ID sirve para prod y staging, ya que ambos entornos viven en el mismo proyecto.
-6. En `kipo-dashboard` y `kipo-platform` (Project → Settings → Environments), crear el Custom Environment `staging` junto al de `Production` ya existente.
+5. Anotar el **Project ID** de cada uno (Project → Settings → General) — son los `VERCEL_PROJECT_ID_*` que ya esperan los workflows. El mismo ID sirve para prod y staging, ya que ambos entornos viven en el mismo proyecto (prod = deployment de Production, staging = Preview deployment aliasado).
 
 ## Paso 2 — Supabase cloud (2 proyectos)
 
@@ -88,41 +114,35 @@ staging a nadie:
 
 ## Paso 4 — DNS en kipo.com.mx
 
-En el proveedor donde está registrado/administrado `kipo.com.mx`, agregar (Vercel te da los valores exactos al agregar el "Custom Domain" en cada proyecto — normalmente CNAME a `cname.vercel-dns.com` para subdominios, o los A/ALIAS que indique Vercel para el apex):
+En el proveedor donde está registrado/administrado `kipo.com.mx`, agregar los registros de la tabla de abajo. Para dominios normales, Vercel te da un CNAME (`cname.vercel-dns.com`) o el A/ALIAS que indique para el apex. **Para wildcards, Vercel requiere que le delegues los nameservers** de esa zona — no basta un CNAME.
 
-| Registro | Apunta a | Environment en Vercel |
-|---|---|---|
-| `kipo.com.mx` (apex) / `www` | proyecto `kipo-landing` (ya en uso — solo migrar si aún no apunta a Vercel) | Production |
-| `app.kipo.com.mx` | proyecto `kipo-dashboard` | Production |
-| `*.kipo.com.mx` (wildcard, tenants) | proyecto `kipo-dashboard` | Production |
-| `staging.kipo.com.mx` | proyecto `kipo-dashboard` | Custom Environment `staging` |
-| `*.staging.kipo.com.mx` (wildcard, tenants) | proyecto `kipo-dashboard` | Custom Environment `staging` |
-| `api.kipo.com.mx` | proyecto `kipo-platform` | Production |
-| `staging-api.kipo.com.mx` | proyecto `kipo-platform` | Custom Environment `staging` |
+| Registro | Apunta a | Deployment en Vercel | Tipo de registro |
+|---|---|---|---|
+| `kipo.com.mx` (apex) / `www` | proyecto `kipo-landing` (ya en uso — solo migrar si aún no apunta a Vercel) | Production | A/ALIAS o CNAME |
+| `app.kipo.com.mx` | proyecto `kipo-dashboard` | Production | CNAME |
+| `*.kipo.com.mx` (wildcard, tenants prod) | proyecto `kipo-dashboard` | Production | Delegar nameservers de `kipo.com.mx` a Vercel — **impacta también a la landing**, evaluarlo con cuidado cuando llegue el momento (no es parte de este runbook de staging) |
+| `staging.kipo.com.mx` | proyecto `kipo-dashboard` | Preview (alias manual, ver arriba) | CNAME |
+| `*.staging.kipo.com.mx` (wildcard, tenants staging) | proyecto `kipo-dashboard` | Preview (alias manual) | Delegar nameservers **solo de la subzona `staging.kipo.com.mx`** (registro NS en el proveedor actual apuntando a los nameservers de Vercel) — así no se toca el DNS del resto de `kipo.com.mx` |
+| `api.kipo.com.mx` | proyecto `kipo-platform` | Production | CNAME |
+| `staging-api.kipo.com.mx` | proyecto `kipo-platform` | Preview (alias manual) | CNAME |
 
 Agregar el domain primero en el proyecto de Vercel (Project → Settings →
-Domains), asignándolo explícitamente al Environment correspondiente
-(Production o el Custom Environment `staging`), copiar el valor exacto que
-pide, y recién después crear el registro DNS. Los wildcards (`*.kipo.com.mx`,
-`*.staging.kipo.com.mx`) son el mecanismo para los subdominios por negocio
-(`keeb-studio.kipo.com.mx`, `keeb-studio.staging.kipo.com.mx`) — la app lee
-el subdominio en runtime para resolver el tenant, no hace falta un registro
-DNS por cliente.
+Domains), copiar el valor exacto que pide (CNAME o nameservers), y recién
+después crear el registro en el proveedor DNS. Los wildcards son el
+mecanismo para los subdominios por negocio (`keeb-studio.kipo.com.mx`,
+`keeb-studio.staging.kipo.com.mx`) — la app lee el subdominio en runtime
+para resolver el tenant, no hace falta un registro DNS por cliente.
 
 ## Paso 5 — GitHub Secrets y Environments
 
-Usar **GitHub Environments** (`kipo-platform` → Settings → Environments) para separar `staging` y `production`, en vez de secrets planos a nivel repo — así el mismo nombre de secret (`DATABASE_URL`, `VERCEL_PROJECT_ID_BACKEND`, etc.) tiene un valor distinto según el entorno del job.
+Usar **GitHub Environments** (`kipo-platform` → Settings → Environments) para separar `Staging` y `Production`, en vez de secrets planos a nivel repo — así el mismo nombre de secret (`DATABASE_URL`, `VERCEL_PROJECT_ID_BACKEND`, etc.) tiene un valor distinto según el entorno del job. **Los nombres deben ser exactamente `Staging` y `Production`** (con mayúscula) — es como ya están creados en GitHub, y el workflow_dispatch de los 3 workflows abajo manda ese mismo valor (`inputs.environment`) al campo `environment:` del job, que hace match exacto y sensible a mayúsculas contra el nombre del Environment.
 
-Nota: `VERCEL_PROJECT_ID_DASHBOARD` y `VERCEL_PROJECT_ID_BACKEND` ya **no
-cambian entre entornos** (mismo proyecto para prod y staging) — lo único
-que distingue el deploy es el flag `--target` y, dentro de Vercel, las env
-vars scopeadas al Custom Environment `staging` (configuradas directo en
-Project → Settings → Environment Variables, no necesariamente como GitHub
-secret). Aun así conviene mantener `staging`/`production` como GitHub
-Environments para separar lo que sí cambia por entorno: la referencia a
-Supabase, la URL pública, y CORS.
+Nota: `VERCEL_PROJECT_ID_DASHBOARD` y `VERCEL_PROJECT_ID_BACKEND` **no
+cambian entre entornos** (mismo proyecto para prod y staging) — lo que
+distingue el deploy es si se manda con `--prod` (producción) o sin él +
+alias manual (staging, ver [Arquitectura objetivo](#arquitectura-objetivo)).
 
-1. Crear environment `production` y `staging` en el repo.
+1. Crear environment `Production` y `Staging` en el repo (mayúscula inicial).
 2. En cada uno, cargar (Secrets o Variables según ya distinguen los workflows actuales):
 
    | Nombre | Tipo | Prod | Staging |
@@ -144,29 +164,34 @@ Supabase, la URL pública, y CORS.
    | `NEXT_PUBLIC_API_URL` | variable | `https://api.kipo.com.mx` | `https://staging-api.kipo.com.mx` |
    | `NEXT_PUBLIC_APP_DOMAIN` | variable | `kipo.com.mx` | `staging.kipo.com.mx` |
 
-   `DATABASE_URL`, `PROJECT_URL`, `AUTH_KEY_*`, `STORAGE_*`,
-   `NEXT_PUBLIC_*` también se pueden cargar directo en Vercel (Project →
-   Settings → Environment Variables, scopeadas a Production vs. Custom
-   Environment `staging`) en vez de pasarlas por GitHub — Vercel las
-   inyecta solas según el `--target` del deploy. Dejarlas en GitHub
-   Environments tiene sentido solo si además las necesitas en el propio
-   job de CI (por ejemplo, para correr las migraciones de Supabase antes
-   del deploy).
+   Como no hay Custom Environments en Hobby, estas variables **no se
+   pueden scopear dentro de Vercel** por entorno nombrado — hay que
+   seguir pasándolas como `--env`/`--build-env` en el propio comando de
+   `vercel deploy` (igual que ya hacen `deploy-backend.yml` y
+   `deploy-dashboard.yml` hoy para prod), leyéndolas del GitHub
+   Environment correspondiente.
 
-3. **Pendiente de código** (no es solo infraestructura, requiere tocar los workflows): hoy `deploy-backend.yml` y `deploy-dashboard.yml` no tienen `environment:` ni una forma de disparar staging — solo `workflow_dispatch` manual contra prod, con `vercel deploy --prod` fijo. Para que "staging" sea usable, hay que:
-   - Agregar un input (`environment: staging|production`) al `workflow_dispatch`.
-   - Cambiar el comando de deploy para que use `--target "$ENVIRONMENT"` (con `production`/`staging`) en vez de `--prod` fijo — `vercel deploy --target production` es equivalente a `--prod`, y `--target staging` apunta al Custom Environment.
-   - Seleccionar el GitHub Environment (`environment: ${{ inputs.environment }}`) del job para que tome el secret/variable correcto de Supabase/CORS/URL según el paso 2 de arriba.
-
-   Esto es trabajo de implementación aparte; este documento cubre solo la infraestructura a preparar antes de ese cambio.
+3. **Ya implementado** en los 3 workflows (`deploy-backend.yml`, `deploy-dashboard.yml`, `deploy-migrations.yml`): todos tienen ahora un input `environment` (`type: choice`, opciones `Production`/`Staging`, default `Production`) en su `workflow_dispatch`, y el job usa `environment: ${{ inputs.environment }}` para que el secret/variable correcto se resuelva según el Environment de GitHub elegido:
+   - `deploy-backend.yml` / `deploy-dashboard.yml`: si `Production`, corre `vercel deploy --prod ...` (sin cambios respecto a antes); si `Staging`, corre `vercel deploy ...` (sin `--prod`, genera un Preview) y encadena los `vercel alias` (dominio fijo + wildcard en dashboard) descritos en [Arquitectura objetivo](#arquitectura-objetivo).
+   - `deploy-migrations.yml`: mismo input, solo cambia a qué proyecto de Supabase (`Staging` o `Production`) se le hace `db push` — sigue siendo `workflow_dispatch` únicamente, sin trigger automático.
+   - Para `Production`, el job sigue exigiendo `github.ref == 'refs/heads/main'`; `Staging` puede correr desde cualquier rama.
+   - Pendiente real: en `deploy-backend.yml`, el paso de staging manda `FLASK_ENV=production` (no `staging`) a propósito — `shared/config.py` (`config_mapping`) todavía no tiene una entrada `"staging"`, solo `development`/`production`/`testing`, así que mandar `staging` ahí tronaría el backend con `KeyError`. Si más adelante se agrega esa entrada en el código del backend, este valor se puede cambiar a `staging`.
 
 ## Orden recomendado para hacerlo por primera vez
 
-1. Vercel: cuenta Pro + token + 3 proyectos vacíos + Custom Environment `staging` en `kipo-dashboard` y `kipo-platform` (Paso 1).
+1. Vercel: cuenta Hobby + token + 3 proyectos vacíos (Paso 1).
 2. Supabase: 2 proyectos + migraciones aplicadas (Paso 2).
-3. GitHub Environments + secrets/vars cargados, y env vars scopeadas en Vercel por entorno (Paso 5).
-4. Ajustar los workflows para aceptar `--target staging|production` (Paso 5.3) — sin esto, no hay forma de disparar un deploy de staging.
-5. Deploy manual de staging primero (`workflow_dispatch` con `environment: staging`) para validar que todo conecta antes de tocar DNS.
-6. DNS + wildcard de staging (Paso 4) para poder compartir el link con el equipo, incluyendo subdominios de tenant.
-7. Repetir deploy contra prod, y solo al final mover/confirmar el DNS de `kipo.com.mx` / `app.kipo.com.mx` / `api.kipo.com.mx` / `*.kipo.com.mx`.
+3. GitHub Environments (`Production`/`Staging`, mayúscula) + secrets/vars cargados (Paso 5).
+4. Los 3 workflows ya soportan `environment: Production|Staging` (Paso 5.3, implementado) — falta solo cargar los secrets/vars del punto anterior para que funcionen de punta a punta.
+5. Deploy manual de staging primero (`workflow_dispatch` con `environment: Staging`) para validar que el alias conecta antes de tocar DNS del wildcard.
+6. DNS de staging: CNAME de `staging.kipo.com.mx` + delegación de nameservers solo de esa subzona para el wildcard `*.staging.kipo.com.mx` (Paso 4).
+7. Repetir deploy contra prod, y solo al final confirmar el DNS de `kipo.com.mx` / `app.kipo.com.mx` / `api.kipo.com.mx` (el wildcard `*.kipo.com.mx` de prod, al requerir delegar nameservers de todo el dominio, se evalúa aparte por su impacto en la landing).
 8. PAC: confirmar sandbox antes de que cualquiera pruebe timbrado en staging (Paso 3).
+
+## Apéndice — Si más adelante suben a Vercel Pro
+
+Con Pro se puede simplificar el mecanismo de staging:
+- Crear un **Custom Environment** `staging` en `kipo-dashboard` y `kipo-platform` (Project → Settings → Environments).
+- Asignarle el dominio (`staging.kipo.com.mx` + wildcard) directo desde Vercel, sin `vercel alias` manual — cada deploy a ese entorno actualiza el dominio solo.
+- Cambiar el comando de deploy de `vercel deploy` (sin flag) a `vercel deploy --target staging`, y las env vars de staging se pueden mover de GitHub a Project → Settings → Environment Variables scopeadas al Custom Environment.
+- El resto del runbook (Supabase, PAC, GitHub Environments para secrets que no viven en Vercel) no cambia.
