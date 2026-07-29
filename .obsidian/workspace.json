@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/environments-setup.md",
+                "file": "docs/environment-variables.md",
                 "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "environments-setup"
+              "title": "environment-variables"
             }
           }
         ]
@@ -184,5 +184,9 @@
     }
   },
   "active": "020f9134d27e0a74",
-  "lastOpenFiles": []
+  "lastOpenFiles": [
+    "docs/environments-setup.md",
+    "docs/local-development.md",
+    "docs/stripe-local-testing.md"
+  ]
 }

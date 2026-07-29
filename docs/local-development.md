@@ -33,6 +33,7 @@ El proyecto usa tres archivos de variables de entorno distintos. Ninguno está e
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 NEXT_PUBLIC_APP_DOMAIN=localhost
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
 ```
 
 > `NEXT_PUBLIC_APP_DOMAIN=localhost` habilita el routing por subdominio en local.  
@@ -58,6 +59,13 @@ STORAGE_REGION=local
 
 # CORS — permite que el dashboard en subdominio llame al backend
 CORS_WILDCARD_DOMAIN=localhost
+
+# Stripe — usa claves de test mode (sk_test_...)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...          # ver sección 5 (Stripe)
+STRIPE_STAMP_WEBHOOK_SECRET=whsec_...   # ver sección 5 (Stripe)
+STRIPE_PRICE_EMPRENDEDOR=price_1TxaieEC4QZg1nWpGOXEX67e
+STRIPE_PRICE_PYME=price_1TxajIEC4QZg1nWpbT3mU8iB
 ```
 
 ### 2c. Raíz — `.env` (solo para providers de auth de Supabase)
@@ -105,7 +113,30 @@ En `supabase/config.toml` hay números de prueba con OTP fijo definidos en `[aut
 
 ---
 
-## 4. Levantar las apps
+## 4. Stripe CLI (para probar pagos)
+
+Si vas a probar el flujo de checkout (suscripciones o timbres), necesitas la Stripe CLI para tunnelear webhooks a tu backend local:
+
+```bash
+brew install stripe/stripe-cli/stripe
+stripe login   # solo la primera vez
+```
+
+Luego en una terminal adicional:
+
+```bash
+stripe listen \
+  --events customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,invoice.payment_failed,payment_intent.succeeded,checkout.session.completed \
+  --forward-to localhost:8000/api/v1/subscriptions/webhook
+```
+
+Al iniciar imprime un `whsec_...` — ponlo en `STRIPE_WEBHOOK_SECRET` y `STRIPE_STAMP_WEBHOOK_SECRET` del `.env` del backend.
+
+> Ver guía completa en [stripe-local-testing.md](./stripe-local-testing.md).
+
+---
+
+## 5. Levantar las apps
 
 Desde la raíz del repo, todo junto:
 
@@ -120,6 +151,8 @@ pnpm dev:api        # Backend Flask en http://localhost:8000
 pnpm dev:dashboard  # Dashboard Next.js en http://localhost:3000
 pnpm dev:landing    # Landing Astro
 ```
+
+> Si vas a probar pagos, corre también `stripe listen` en una terminal adicional (ver sección 4).
 
 ### Acceder al dashboard de un tenant
 

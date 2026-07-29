@@ -10,6 +10,7 @@ Referencia completa de todas las variables que necesita el stack. Los valores ca
 |---|---|---|---|---|
 | `NEXT_PUBLIC_API_URL` | URL base del backend que consume el dashboard | `http://localhost:8000` | `https://staging-api.kipo.com.mx` | `https://api.kipo.com.mx` |
 | `NEXT_PUBLIC_APP_DOMAIN` | Dominio base para routing por subdominio de tenant | `localhost` | `staging.kipo.com.mx` | `kipo.com.mx` |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clave pública de Stripe para inicializar Stripe.js en el browser | `pk_test_...` | `pk_test_...` | `pk_live_...` |
 
 > **`NEXT_PUBLIC_APP_DOMAIN` es obligatoria.** Sin ella el login redirige a una URL rota (`slug.:puerto/dashboard`).  
 > **Reiniciar el dev server** después de cambiar `.env.local` — Next.js no hot-reloads este archivo.
@@ -120,7 +121,11 @@ export $(grep -v '^#' .env | xargs) && supabase start
 | `AUTH_KEY_SECRET` | service_role key Supabase local | service_role key `kipo-staging` | service_role key `kipo-prod` |
 | `STORAGE_URL` | `http://127.0.0.1:54321/storage/v1/s3` | Storage `kipo-staging` | Storage `kipo-prod` |
 | `STORAGE_REGION` | `local` | región real | región real |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | `pk_test_...` | `pk_test_...` | `pk_live_...` |
 | `STRIPE_SECRET_KEY` | `sk_test_...` | `sk_test_...` | `sk_live_...` |
-| `STRIPE_PRICE_EMPRENDEDOR` | price test | price test staging | price live prod |
+| `STRIPE_WEBHOOK_SECRET` | `whsec_...` (stripe listen) | `whsec_...` staging | `whsec_...` prod |
+| `STRIPE_STAMP_WEBHOOK_SECRET` | `whsec_...` (stripe listen) | `whsec_...` staging | `whsec_...` prod |
+| `STRIPE_PRICE_EMPRENDEDOR` | `price_1TxaieEC4...` | `price_1TxaieEC4...` | price live prod |
+| `STRIPE_PRICE_PYME` | `price_1TxajIEC4...` | `price_1TxajIEC4...` | price live prod |
 | `CORS_WILDCARD_DOMAIN` | `localhost` | `staging.kipo.com.mx` | `kipo.com.mx` |
 | `FLASK_ENV` | `development` | `production` | `production` |
