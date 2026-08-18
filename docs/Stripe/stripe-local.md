@@ -20,9 +20,9 @@ stripe login
 
 ---
 
-## Setup: 4 terminales
+## Setup: 5 terminales
 
-El stack completo requiere cuatro procesos corriendo en paralelo.
+El stack completo requiere cinco procesos corriendo en paralelo. Suscripciones y timbres tienen endpoints de webhook separados, por lo que necesitan dos túneles de Stripe.
 
 ```bash
 # Terminal 1 — Supabase (Docker debe estar corriendo)
@@ -34,26 +34,31 @@ pnpm dev:api
 # Terminal 3 — Dashboard Next.js
 pnpm dev:dashboard
 
-# Terminal 4 — Stripe webhook tunnel
+# Terminal 4 — Stripe webhook tunnel: suscripciones
 stripe listen \
-  --events customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,invoice.payment_failed,payment_intent.succeeded,checkout.session.completed \
+  --events customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,invoice.payment_failed \
   --forward-to localhost:8000/api/v1/subscriptions/webhook
+
+# Terminal 5 — Stripe webhook tunnel: timbres
+stripe listen \
+  --events checkout.session.completed \
+  --forward-to localhost:8000/api/v1/stamp-packs/webhook
 ```
 
-### Webhook secret temporal
+### Webhook secrets temporales
 
-Al iniciar `stripe listen`, imprime una línea como esta:
+Al iniciar cada `stripe listen`, imprime una línea como esta:
 
 ```
 > Ready! Your webhook signing secret is whsec_abc123...
 ```
 
-Ese `whsec_...` **es diferente** al de staging/prod. Cópialo en el `.env` del backend:
+Ambos túneles generan el **mismo** `whsec_` (ligado a la cuenta, no al proceso). Cópialo en el `.env` del backend:
 
 ```env
 # src/apps/kipo-platform/.env
-STRIPE_WEBHOOK_SECRET=whsec_abc123...       # el que imprimió stripe listen
-STRIPE_STAMP_WEBHOOK_SECRET=whsec_abc123... # el mismo sirve para ambos en local
+STRIPE_WEBHOOK_SECRET=whsec_abc123...       # de Terminal 4
+STRIPE_STAMP_WEBHOOK_SECRET=whsec_abc123... # de Terminal 5 (mismo valor)
 ```
 
 Reinicia el backend (`Ctrl+C` en Terminal 2 y `pnpm dev:api` de nuevo) para que tome el nuevo valor.
@@ -100,7 +105,7 @@ STRIPE_PRICE_PYME=price_1TxajIEC4QZg1nWpbT3mU8iB
 **Qué sucede en el backend:**
 - Se crea una suscripción en Stripe con estado `incomplete`
 - Al confirmar el pago, Stripe dispara `customer.subscription.updated` (estado `active`)
-- El webhook llega vía `stripe listen` al endpoint `/api/v1/subscriptions/webhook`
+- El webhook llega vía Terminal 4 al endpoint `/api/v1/subscriptions/webhook`
 - El backend actualiza el plan del tenant en Supabase
 
 ---
@@ -118,8 +123,9 @@ STRIPE_PRICE_PYME=price_1TxajIEC4QZg1nWpbT3mU8iB
 
 **Qué sucede en el backend:**
 - Se crea un `PaymentIntent` en Stripe con los metadatos del pack (`tenant_id`, `pack_id`, `qty`)
-- Al confirmar, Stripe dispara `payment_intent.succeeded`
-- El webhook acredita los timbres al tenant en Supabase
+- Al confirmar, Stripe dispara `checkout.session.completed`
+- El webhook llega vía Terminal 5 al endpoint `/api/v1/stamp-packs/webhook`
+- El backend acredita los timbres al tenant en Supabase
 
 ---
 
@@ -152,7 +158,7 @@ Para disparar eventos manualmente sin hacer un pago real:
 stripe trigger customer.subscription.updated
 
 # Simular pago de timbres exitoso
-stripe trigger payment_intent.succeeded
+stripe trigger checkout.session.completed
 ```
 
 ---
@@ -169,10 +175,10 @@ stripe trigger payment_intent.succeeded
 - El backend no tiene `STRIPE_SECRET_KEY` o `STRIPE_PRICE_EMPRENDEDOR`/`STRIPE_PRICE_PYME` en `.env`.
 - Revisa los logs del backend en Terminal 2.
 
-### El webhook no llega (Terminal 4 no muestra eventos)
+### El webhook no llega (Terminal 4 o 5 no muestra eventos)
 
-- `stripe listen` no está corriendo o se cayó — reinicia Terminal 4.
-- `STRIPE_WEBHOOK_SECRET` en `.env` no coincide con el `whsec_` que imprimió `stripe listen` — cópialos de nuevo.
+- `stripe listen` no está corriendo o se cayó — reinicia la terminal correspondiente (Terminal 4 para suscripciones, Terminal 5 para timbres).
+- `STRIPE_WEBHOOK_SECRET` o `STRIPE_STAMP_WEBHOOK_SECRET` en `.env` no coincide con el `whsec_` que imprimió `stripe listen` — cópialos de nuevo.
 
 ### Pago 3DS se queda colgado
 

@@ -132,7 +132,7 @@ stripe listen \
 
 Al iniciar imprime un `whsec_...` — ponlo en `STRIPE_WEBHOOK_SECRET` y `STRIPE_STAMP_WEBHOOK_SECRET` del `.env` del backend.
 
-> Ver guía completa en [stripe-local-testing.md](./stripe-local-testing.md).
+> Ver guía completa en [stripe-local-testing.md](stripe-local.md).
 
 ---
 
