@@ -28,7 +28,7 @@
               "type": "markdown",
               "state": {
                 "file": "docs/Infraestructura.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               },
               "icon": "lucide-file",
@@ -225,14 +225,14 @@
   },
   "active": "082abd48a85ff137",
   "lastOpenFiles": [
-    "docs/environment-variables.md",
     "docs/Diagrama Infraestructura.md",
-    "Diagram.svg",
+    "docs/Variables de entorno.md",
+    "docs/environment-variables.md",
     "docs/Infraestructura.md",
+    "Diagram.svg",
     "docs/Desarrollo local.md",
     "Diagram.svg.xml",
     "docs/Stripe/Desarrollo local (stripe).md",
-    "docs/Variables de entorno.md",
     "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
     "docs/Manejo de subscripciones y permisos/feature-gating.md",
     "Untitled.canvas",

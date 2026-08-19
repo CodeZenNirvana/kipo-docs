@@ -16,19 +16,14 @@
         "lastSync": 1787164716956,
         "hash": "138081250"
       },
-      "docs/environment-variables.md": {
-        "sha": "3eace85e3158542039e6e6fabd60fe47205e453f",
-        "lastSync": 1787168346478,
-        "hash": "-1984076430"
-      },
       "README.md": {
         "sha": "8a18364de1e5d7d9173f39fa14fed4ab7b7a9793",
         "lastSync": 1787164427853,
         "hash": "-956800191"
       },
       ".obsidian/sync-stats.json": {
-        "sha": "d29d98f721b73d67e49bbf16906d604b7c4b1bf2",
-        "lastSync": 1787168348541
+        "sha": "fc0a84bf26947b187e666db00f7736815fe1bf89",
+        "lastSync": 1787168518834
       },
       "docs/Desarrollo local.md": {
         "sha": "ecfd4f00024c736b2a08bb4e4e9a2ae533c1818e",
@@ -52,12 +47,12 @@
       },
       "docs/Diagrama Infraestructura.md": {
         "sha": "e08506ffd2bc498e168e887acae0a01765be5b1c",
-        "lastSync": 1787168221580,
+        "lastSync": 1787168420541,
         "hash": "-1017172376"
       },
       "Diagram.svg": {
         "sha": "a25bd8551e4fc4009dea7abe81125a13c46f4529",
-        "lastSync": 1787168220144,
+        "lastSync": 1787168418583,
         "hash": "27585_1787168213894"
       }
     }
