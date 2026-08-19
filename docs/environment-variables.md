@@ -6,11 +6,11 @@ Referencia completa de todas las variables que necesita el stack. Los valores ca
 
 ## Dashboard — `src/apps/kipo-dashboard/.env.local`
 
-| Variable | Para qué | Local | Staging | Prod |
-|---|---|---|---|---|
-| `NEXT_PUBLIC_API_URL` | URL base del backend que consume el dashboard | `http://localhost:8000` | `https://staging-api.kipo.com.mx` | `https://api.kipo.com.mx` |
-| `NEXT_PUBLIC_APP_DOMAIN` | Dominio base para routing por subdominio de tenant | `localhost` | `staging.kipo.com.mx` | `kipo.com.mx` |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clave pública de Stripe para inicializar Stripe.js en el browser | `pk_test_...` | `pk_test_...` | `pk_live_...` |
+| Variable                             | Para qué                                                         | Local                   | Staging                           | Prod                      |
+| ------------------------------------ | ---------------------------------------------------------------- | ----------------------- | --------------------------------- | ------------------------- |
+| `NEXT_PUBLIC_API_URL`                | URL base del backend que consume el dashboard                    | `http://localhost:8000` | `https://staging-api.kipo.com.mx` | `https://api.kipo.com.mx` |
+| `NEXT_PUBLIC_APP_DOMAIN`             | Dominio base para routing por subdominio de tenant               | `localhost`             | `staging.kipo.com.mx`             | `kipo.com.mx`             |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Clave pública de Stripe para inicializar Stripe.js en el browser | `pk_test_...`           | `pk_test_...`                     | `pk_live_...`             |
 
 > **`NEXT_PUBLIC_APP_DOMAIN` es obligatoria.** Sin ella el login redirige a una URL rota (`slug.:puerto/dashboard`).  
 > **Reiniciar el dev server** después de cambiar `.env.local` — Next.js no hot-reloads este archivo.
