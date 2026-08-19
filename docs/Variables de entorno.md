@@ -56,7 +56,7 @@ supabase status
 | `STRIPE_PRICE_EMPRENDEDOR` | Price ID en Stripe del plan Emprendedor (`price_xxx`) |
 | `STRIPE_PRICE_PYME` | Price ID en Stripe del plan PyME (`price_xxx`) |
 
-En local puedes usar las claves de **test mode** de Stripe (`STRIPE_TEST_KEY_REMOVED`) — no cobra real.  
+En local puedes usar las claves de **test mode** de Stripe (`sk_test_...`) — no cobra real.  
 En staging, también test mode. En prod, claves live (`sk_live_...`).
 
 ---
