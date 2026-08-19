@@ -1,5 +1,26 @@
-
-# Feature Gating — Subscripciones y Add-ons
+- [[#Arquitectura|Arquitectura]]
+	- [[#Arquitectura#Estructura del JSONB `entitlements`|Estructura del JSONB `entitlements`]]
+- [[#Planes y sus entitlements|Planes y sus entitlements]]
+	- [[#Planes y sus entitlements#Módulos por plan|Módulos por plan]]
+	- [[#Planes y sus entitlements#Features por plan|Features por plan]]
+	- [[#Planes y sus entitlements#Add-ons disponibles (No requiere subscripcion activa)|Add-ons disponibles (No requiere subscripcion activa)]]
+- [[#Regla de UX — Qué mostrar y qué ocultar|Regla de UX — Qué mostrar y qué ocultar]]
+	- [[#Regla de UX — Qué mostrar y qué ocultar#Módulos de plan: siempre visibles, bloqueados si no aplica|Módulos de plan: siempre visibles, bloqueados si no aplica]]
+	- [[#Regla de UX — Qué mostrar y qué ocultar#Add-ons: ocultos si no están contratados|Add-ons: ocultos si no están contratados]]
+- [[#Cómo implementar un nuevo módulo de plan|Cómo implementar un nuevo módulo de plan]]
+	- [[#Cómo implementar un nuevo módulo de plan#1. Agregar al catálogo (`plan_catalog.py`)|1. Agregar al catálogo (`plan_catalog.py`)]]
+	- [[#Cómo implementar un nuevo módulo de plan#2. Proteger los endpoints del backend|2. Proteger los endpoints del backend]]
+	- [[#Cómo implementar un nuevo módulo de plan#3. Agregar el permiso al catálogo de permisos|3. Agregar el permiso al catálogo de permisos]]
+	- [[#Cómo implementar un nuevo módulo de plan#4. Implementar el gate en el frontend|4. Implementar el gate en el frontend]]
+	- [[#Cómo implementar un nuevo módulo de plan#5. Para add-ons: mostrar solo si está activo|5. Para add-ons: mostrar solo si está activo]]
+- [[#Cómo implementar una nueva feature dentro de un módulo existente|Cómo implementar una nueva feature dentro de un módulo existente]]
+- [[#Cómo implementar un nuevo add-on|Cómo implementar un nuevo add-on]]
+	- [[#Cómo implementar un nuevo add-on#1. Agregar al catálogo|1. Agregar al catálogo]]
+	- [[#Cómo implementar un nuevo add-on#2. Agregar la variable de entorno|2. Agregar la variable de entorno]]
+	- [[#Cómo implementar un nuevo add-on#3. Crear el Price en Stripe|3. Crear el Price en Stripe]]
+	- [[#Cómo implementar un nuevo add-on#4. Frontend: solo mostrar si activo|4. Frontend: solo mostrar si activo]]
+- [[#Archivos clave de referencia|Archivos clave de referencia]]
+- [[#DB: tablas relacionadas|DB: tablas relacionadas]]
 
 ## Arquitectura
 
@@ -288,7 +309,7 @@ En todos los entornos:
 STRIPE_PRICE_ADDON_NUEVO=price_xxxxx
 ```
 
-Ver [environment-variables.md](environment-variables.md) para el proceso de agregar variables.
+Ver [environment-variables.md](Variables%20de%20entorno.md) para el proceso de agregar variables.
 
 ### 3. Crear el Price en Stripe
 

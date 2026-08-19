@@ -1,0 +1,65 @@
+{
+  "settings": {
+    "syncEnabled": true,
+    "githubOwner": "CodeZenNirvana",
+    "githubRepo": "kipo-docs",
+    "githubBranch": "main",
+    "githubToken": "GITHUB_TOKEN_REMOVED",
+    "lastSyncTime": 0,
+    "vault": "kipo-docs",
+    "clipboardReadTip": ""
+  },
+  "syncData": {
+    "files": {
+      "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md": {
+        "sha": "792d202cc49ffc536fc328173680bba131472582",
+        "lastSync": 1787164716956,
+        "hash": "138081250"
+      },
+      "docs/environment-variables.md": {
+        "sha": "3eace85e3158542039e6e6fabd60fe47205e453f",
+        "lastSync": 1787168346478,
+        "hash": "-1984076430"
+      },
+      "README.md": {
+        "sha": "8a18364de1e5d7d9173f39fa14fed4ab7b7a9793",
+        "lastSync": 1787164427853,
+        "hash": "-956800191"
+      },
+      ".obsidian/sync-stats.json": {
+        "sha": "d29d98f721b73d67e49bbf16906d604b7c4b1bf2",
+        "lastSync": 1787168348541
+      },
+      "docs/Desarrollo local.md": {
+        "sha": "ecfd4f00024c736b2a08bb4e4e9a2ae533c1818e",
+        "lastSync": 1787165882086,
+        "hash": "-1786575003"
+      },
+      "docs/Infraestructura.md": {
+        "sha": "af87f06ca6b9cc2d10eb4e731cc737f9358c99cb",
+        "lastSync": 1787168342142,
+        "hash": "-1074233366"
+      },
+      "docs/Variables de entorno.md": {
+        "sha": "1548d9ef9877db8eef008cc6379036b9ef7557b3",
+        "lastSync": 1787164994772,
+        "hash": "-540901486"
+      },
+      "docs/Stripe/Desarrollo local (stripe).md": {
+        "sha": "2de62c5abc6b699e42869a5c94dd3a815c14e724",
+        "lastSync": 1787165877871,
+        "hash": "-70132085"
+      },
+      "docs/Diagrama Infraestructura.md": {
+        "sha": "e08506ffd2bc498e168e887acae0a01765be5b1c",
+        "lastSync": 1787168221580,
+        "hash": "-1017172376"
+      },
+      "Diagram.svg": {
+        "sha": "a25bd8551e4fc4009dea7abe81125a13c46f4529",
+        "lastSync": 1787168220144,
+        "hash": "27585_1787168213894"
+      }
+    }
+  }
+}

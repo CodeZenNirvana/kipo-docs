@@ -4,24 +4,39 @@
     "type": "split",
     "children": [
       {
-        "id": "063b75c17c3fec1a",
+        "id": "0b97adc91f583713",
         "type": "tabs",
         "children": [
           {
-            "id": "020f9134d27e0a74",
+            "id": "fb18c950519a5b20",
             "type": "leaf",
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Stripe/stripe-local.md",
-                "mode": "preview",
+                "file": "docs/Stripe/Desarrollo local (stripe).md",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "stripe-local"
+              "title": "Desarrollo local (stripe)"
+            }
+          },
+          {
+            "id": "082abd48a85ff137",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "docs/Infraestructura.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "Infraestructura"
             }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -41,7 +56,9 @@
               "type": "file-explorer",
               "state": {
                 "sortOrder": "alphabetical",
-                "autoReveal": false
+                "autoReveal": false,
+                "showSearch": false,
+                "searchQuery": ""
               },
               "icon": "lucide-folder-closed",
               "title": "Files"
@@ -94,7 +111,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/environments-setup.md",
+                "file": "docs/Infraestructura.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +121,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for environments-setup"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +130,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/environments-setup.md",
+                "file": "docs/Infraestructura.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from environments-setup"
+              "title": "Outgoing links"
             }
           },
           {
@@ -151,47 +168,76 @@
             }
           },
           {
+            "id": "0048d5798d8f7b16",
+            "type": "leaf",
+            "state": {
+              "type": "graph",
+              "state": {},
+              "icon": "lucide-git-fork",
+              "title": "Graph view"
+            }
+          },
+          {
             "id": "5afb9e6cb34c24ba",
             "type": "leaf",
             "state": {
               "type": "outline",
               "state": {
-                "file": "docs/environments-setup.md",
+                "file": "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of environments-setup"
+              "title": "Outline"
+            }
+          },
+          {
+            "id": "f34422ed5ad05bac",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {},
+              "icon": "spreadsheet",
+              "title": "Advanced Tables"
             }
           }
-        ]
+        ],
+        "currentTab": 4
       }
     ],
     "direction": "horizontal",
-    "width": 300,
-    "collapsed": true
+    "width": 458.03125
   },
   "left-ribbon": {
     "hiddenItems": {
       "switcher:Open quick switcher": false,
-      "graph:Open graph view": false,
       "canvas:Create new canvas": false,
       "daily-notes:Open today's daily note": false,
       "templates:Insert template": false,
       "command-palette:Open command palette": false,
-      "bases:Create new base": false
+      "bases:Create new base": false,
+      "graph:Open graph view": false,
+      "audio-recorder:Start/stop recording": false,
+      "github-sync-multi-platform:Obsidian-Github-Sync-Multi-Platform: Sync all notes": false,
+      "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
-  "active": "020f9134d27e0a74",
+  "active": "082abd48a85ff137",
   "lastOpenFiles": [
-    "README.md",
     "docs/environment-variables.md",
-    "docs/Stripe/stripe-local.md",
-    "docs/Stripe",
+    "docs/Diagrama Infraestructura.md",
+    "Diagram.svg",
+    "docs/Infraestructura.md",
+    "docs/Desarrollo local.md",
+    "Diagram.svg.xml",
+    "docs/Stripe/Desarrollo local (stripe).md",
+    "docs/Variables de entorno.md",
+    "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
     "docs/Manejo de subscripciones y permisos/feature-gating.md",
-    "docs/Manejo de subscripciones y permisos",
-    "docs/environments-setup.md",
-    "docs/local-development.md"
+    "Untitled.canvas",
+    "README.md",
+    "docs/Stripe",
+    "docs/Manejo de subscripciones y permisos"
   ]
 }

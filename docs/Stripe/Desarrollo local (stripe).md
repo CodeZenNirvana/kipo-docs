@@ -3,6 +3,21 @@
 Guía para testear el flujo completo de checkout con Stripe Elements en desarrollo local — sin cobros reales.
 
 ---
+- [[#Requisitos previos|Requisitos previos]]
+- [[#Setup: 5 terminales|Setup: 5 terminales]]
+	- [[#Setup: 5 terminales#Webhook secrets temporales|Webhook secrets temporales]]
+- [[#Variables de entorno necesarias|Variables de entorno necesarias]]
+	- [[#Variables de entorno necesarias#`src/apps/kipo-dashboard/.env.local`|`src/apps/kipo-dashboard/.env.local`]]
+	- [[#Variables de entorno necesarias#`src/apps/kipo-platform/.env`|`src/apps/kipo-platform/.env`]]
+- [[#Flujo 1: Comprar una suscripción|Flujo 1: Comprar una suscripción]]
+- [[#Flujo 2: Comprar paquete de timbres|Flujo 2: Comprar paquete de timbres]]
+- [[#Tarjetas de prueba|Tarjetas de prueba]]
+- [[#Ver eventos en tiempo real|Ver eventos en tiempo real]]
+- [[#Troubleshooting|Troubleshooting]]
+	- [[#Troubleshooting#El `PaymentElement` no aparece|El `PaymentElement` no aparece]]
+	- [[#Troubleshooting#Error 400/500 al crear el payment intent|Error 400/500 al crear el payment intent]]
+	- [[#Troubleshooting#El webhook no llega (Terminal 4 o 5 no muestra eventos)|El webhook no llega (Terminal 4 o 5 no muestra eventos)]]
+	- [[#Troubleshooting#Pago 3DS se queda colgado|Pago 3DS se queda colgado]]
 
 ## Requisitos previos
 

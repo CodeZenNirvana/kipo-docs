@@ -30,43 +30,11 @@ El proyecto usa tres archivos de variables de entorno distintos. Ninguno está e
 
 ### 2a. Dashboard — `src/apps/kipo-dashboard/.env.local`
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:8000
-NEXT_PUBLIC_APP_DOMAIN=localhost
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...
-```
-
-> `NEXT_PUBLIC_APP_DOMAIN=localhost` habilita el routing por subdominio en local.  
-> Los browsers modernos resuelven `*.localhost` a `127.0.0.1` sin configuración extra de DNS.  
-> **Si cambias este archivo, reinicia el dev server** — Next.js no hot-reloads `.env.local`.
+Todas las variables de entorno las puedes encontrar en [[Variables de entorno]]
 
 ### 2b. Backend — `src/apps/kipo-platform/.env`
 
-Primero levanta Supabase (paso 3) para obtener los valores de conexión.
-
-```env
-# Supabase (obtenlos de `supabase status` una vez levantado)
-PROJECT_URL=http://127.0.0.1:54321
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
-AUTH_KEY_PUBLISHABLE=<anon key de supabase status>
-AUTH_KEY_SECRET=<service_role key de supabase status>
-
-# Storage S3-compatible (Supabase local expone MinIO)
-STORAGE_URL=http://127.0.0.1:54321/storage/v1/s3
-STORAGE_ACCESS_KEY=<S3 Access Key de supabase status>
-STORAGE_SECRET_KEY=<S3 Secret Key de supabase status>
-STORAGE_REGION=local
-
-# CORS — permite que el dashboard en subdominio llame al backend
-CORS_WILDCARD_DOMAIN=localhost
-
-# Stripe — usa claves de test mode (sk_test_...)
-STRIPE_SECRET_KEY=sk_test_...
-STRIPE_WEBHOOK_SECRET=whsec_...          # ver sección 5 (Stripe)
-STRIPE_STAMP_WEBHOOK_SECRET=whsec_...   # ver sección 5 (Stripe)
-STRIPE_PRICE_EMPRENDEDOR=price_1TxaieEC4QZg1nWpGOXEX67e
-STRIPE_PRICE_PYME=price_1TxajIEC4QZg1nWpbT3mU8iB
-```
+Primero levanta Supabase (paso 3) para obtener los valores de conexión, revisa [[Variables de entorno]]
 
 ### 2c. Raíz — `.env` (solo para providers de auth de Supabase)
 
@@ -107,9 +75,6 @@ Referencias útiles:
 - `supabase status` — para ver las keys de nuevo sin reiniciar
 - `supabase stop` — apagar contenedores
 
-### Login por teléfono sin SMS real
-
-En `supabase/config.toml` hay números de prueba con OTP fijo definidos en `[auth.sms.test_otp]`. Úsalos para hacer login sin Twilio.
 
 ---
 
@@ -122,17 +87,7 @@ brew install stripe/stripe-cli/stripe
 stripe login   # solo la primera vez
 ```
 
-Luego en una terminal adicional:
-
-```bash
-stripe listen \
-  --events customer.subscription.created,customer.subscription.updated,customer.subscription.deleted,invoice.payment_failed,payment_intent.succeeded,checkout.session.completed \
-  --forward-to localhost:8000/api/v1/subscriptions/webhook
-```
-
-Al iniciar imprime un `whsec_...` — ponlo en `STRIPE_WEBHOOK_SECRET` y `STRIPE_STAMP_WEBHOOK_SECRET` del `.env` del backend.
-
-> Ver guía completa en [stripe-local-testing.md](stripe-local.md).
+> Ver guía completa en [stripe-local-testing.md](Desarrollo%20local%20(stripe).md).
 
 ---
 
