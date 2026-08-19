@@ -44,15 +44,6 @@ supabase status
 # Copia los valores que imprime a tu .env
 ```
 
-Valores típicos de Supabase local:
-
-```env
-PROJECT_URL=http://127.0.0.1:54321
-DATABASE_URL=postgresql://postgres:postgres@127.0.0.1:54322/postgres
-AUTH_KEY_PUBLISHABLE=<anon key>
-AUTH_KEY_SECRET=<service_role key>
-```
-
 ---
 
 ### Stripe (pagos y suscripciones)

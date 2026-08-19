@@ -28,7 +28,7 @@
               "type": "markdown",
               "state": {
                 "file": "docs/Infraestructura.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
@@ -225,12 +225,12 @@
   },
   "active": "082abd48a85ff137",
   "lastOpenFiles": [
-    "docs/Diagrama Infraestructura.md",
-    "docs/Variables de entorno.md",
-    "docs/environment-variables.md",
-    "docs/Infraestructura.md",
-    "Diagram.svg",
     "docs/Desarrollo local.md",
+    "docs/Variables de entorno.md",
+    "docs/Infraestructura.md",
+    "docs/Diagrama Infraestructura.md",
+    "docs/environment-variables.md",
+    "Diagram.svg",
     "Diagram.svg.xml",
     "docs/Stripe/Desarrollo local (stripe).md",
     "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
