@@ -4,6 +4,9 @@ Runbook para pasar de "nada provisionado" a tener **staging** y **producción**
 funcionando para las 3 apps del monorepo `kipo-platform`
 (`kipo-landing`, `kipo-dashboard`, `kipo-platform` backend) + Supabase + DNS. [[Diagrama Infraestructura]]
 
+> Para cómo está armado el repo por dentro (pnpm workspaces, apps, packages y la
+> arquitectura de front y back), ver [[Arquitectura del Monorepo]].
+
 - [[#Nota sobre plan de Vercel (Hobby vs Pro)|Nota sobre plan de Vercel (Hobby vs Pro)]]
 - [[#Arquitectura objetivo|Arquitectura objetivo]]
 - [[#Paso 1 — Cuenta de Vercel|Paso 1 — Cuenta de Vercel]]

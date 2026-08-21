@@ -27,7 +27,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Infraestructura.md",
+                "file": "docs/Infraestructura/Infraestructura.md",
                 "mode": "source",
                 "source": false
               },
@@ -111,7 +111,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "docs/Infraestructura.md",
+                "file": "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -130,7 +130,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "docs/Infraestructura.md",
+                "file": "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
@@ -219,21 +219,25 @@
       "bases:Create new base": false,
       "graph:Open graph view": false,
       "audio-recorder:Start/stop recording": false,
-      "github-sync-multi-platform:Obsidian-Github-Sync-Multi-Platform: Sync all notes": false,
       "table-editor-obsidian:Advanced Tables Toolbar": false
     }
   },
   "active": "082abd48a85ff137",
   "lastOpenFiles": [
+    "docs/Infraestructura/Diagrama Infraestructura.md",
+    "docs/Infraestructura/Arquitectura del Monorepo.md",
+    "docs/Infraestructura/Arquitectura del Frontend.md",
+    "docs/Infraestructura/Arquitectura del Backend.md",
+    "docs/Infraestructura/Arquitectura del Backend.md.tmp.6862.612e0e03c406",
+    "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
+    "docs/Infraestructura/Infraestructura.md",
+    "docs/Stripe/Desarrollo local (stripe).md",
+    "docs/Infraestructura",
     "docs/Desarrollo local.md",
     "docs/Variables de entorno.md",
-    "docs/Infraestructura.md",
-    "docs/Diagrama Infraestructura.md",
     "docs/environment-variables.md",
     "Diagram.svg",
     "Diagram.svg.xml",
-    "docs/Stripe/Desarrollo local (stripe).md",
-    "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
     "docs/Manejo de subscripciones y permisos/feature-gating.md",
     "Untitled.canvas",
     "README.md",
