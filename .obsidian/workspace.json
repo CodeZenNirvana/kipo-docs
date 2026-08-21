@@ -27,12 +27,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "docs/Infraestructura/Infraestructura.md",
+                "file": "docs/Infraestructura/Arquitectura del Backend.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Infraestructura"
+              "title": "Arquitectura del Backend"
             }
           }
         ],
@@ -224,13 +224,13 @@
   },
   "active": "082abd48a85ff137",
   "lastOpenFiles": [
+    "docs/Infraestructura/Infraestructura.md",
     "docs/Infraestructura/Diagrama Infraestructura.md",
     "docs/Infraestructura/Arquitectura del Monorepo.md",
     "docs/Infraestructura/Arquitectura del Frontend.md",
     "docs/Infraestructura/Arquitectura del Backend.md",
     "docs/Infraestructura/Arquitectura del Backend.md.tmp.6862.612e0e03c406",
     "docs/Manejo de subscripciones y permisos/Arquitectura de subscripciones y Add-ons.md",
-    "docs/Infraestructura/Infraestructura.md",
     "docs/Stripe/Desarrollo local (stripe).md",
     "docs/Infraestructura",
     "docs/Desarrollo local.md",
